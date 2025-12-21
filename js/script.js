@@ -1,3 +1,7 @@
+// UPDATE THESE WITH YOUR Bolt Database VALUES
+const SUPABASE_URL = 'https://jznoyiuugqgedkfcyfwv.supabase.co'; // Replace with your Project URL
+const SUPABASE_ANON_KEY = 'sb_publishable_O1GFEpV3278Vp-lsb5YVTg_BZNKfw7y'; // Replace with your Anon Key
+
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -69,10 +73,11 @@ if (contactForm) {
         submitBtn.textContent = 'Sending...';
 
         try {
-            const response = await fetch('https://gvbqvnpzawjvdwsnulyj.supabase.co/functions/v1/contact-form', {
+            const response = await fetch(`${SUPABASE_URL}/functions/v1/contact-form`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                 },
                 body: JSON.stringify({
                     firstName,
