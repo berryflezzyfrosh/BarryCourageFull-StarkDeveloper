@@ -1,6 +1,6 @@
 // SUPABASE CONFIG
-const SUPABASE_URL = 'https://jznoyiuugqgedkfcyfwv.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_O1GFEpV3278Vp-lsb5YVTg_BZNKfw7y';
+const SUPABASE_URL = 'https://wltjyjtcgmwjbcexihgf.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Nh8H0KVoBJ5x4XqALrUz-w_w2ew8plJ';
 
 // ELEMENTS (SAFE CHECKS)
 const hamburger = document.getElementById('hamburger');
