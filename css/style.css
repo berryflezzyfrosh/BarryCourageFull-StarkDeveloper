@@ -16,6 +16,37 @@
   --accent-pink: #ff006e;
 }
 
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, var(--accent-pink), transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: difference;
+  transition: transform 0.1s ease;
+}
+
+/* Position title in the top-right corner */
+#music-title {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-family: 'Calistoga', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 50%;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -285,7 +316,6 @@ body::before {
   box-shadow: 0 0 30px rgba(0, 238, 255, 0.5),
               inset 0 0 30px rgba(0, 238, 255, 0.1);
   animation: float 4s ease-in-out infinite, pulse 3s ease-in-out infinite;
-  opacity: 0;
   animation-delay: 0s;
 }
 
@@ -359,8 +389,8 @@ body::before {
 }
 
 .services-section {
+  background: rgba(5, 17, 41, 0.95);
   padding: 100px 50px;
-  background: rgba(5, 17, 41, 0.5);
 }
 
 .services-container {
@@ -545,8 +575,8 @@ body::before {
 .progress-line.html span { width: 100%; }
 .progress-line.css span { width: 90%; }
 .progress-line.javascript span { width: 70%; }
-.progress-line.python span { width: 54%; }
-.progress-line.react span { width: 95%; }
+.progress-line.python span { width: 15%; }
+.progress-line.react span { width: 20%; }
 
 .professional-skills {
   display: grid;
@@ -831,8 +861,8 @@ body::before {
 }
 
 .contact-section {
+  background: rgba(5, 17, 41, 0.95);
   padding: 100px 50px;
-  background: rgba(5, 17, 41, 0.8);
   border-top: 1px solid rgba(0, 238, 255, 0.1);
 }
 
@@ -963,8 +993,8 @@ body::before {
   border-radius: 8px;
   text-align: center;
   font-weight: 600;
-  animation: slideTop 0.3s ease;
-  margin-top: -15px;
+  animation: slideTop 0.5s ease;
+  margin-top: -18px;
 }
 
 .form-message.success {
@@ -1067,6 +1097,7 @@ body::before {
   }
   
   .home .image img {
+    margin-top: 30px;
     width: 300px;
     height: 300px;
   }
@@ -1107,9 +1138,10 @@ body::before {
     top: 70px;
     flex-direction: column;
     background: rgba(5, 17, 41, 0.98);
+    border-bottom-right-radius: 18px;
     width: 100%;
     text-align: center;
-    transition: 0.3s;
+    transition: 1s;
     padding: 20px 0;
     gap: 0;
   }

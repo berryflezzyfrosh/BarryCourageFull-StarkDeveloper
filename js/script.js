@@ -73,7 +73,7 @@ if (contactForm) {
         submitBtn.textContent = 'Sending...';
 
         try {
-            const response = await fetch(`${SUPABASE_URL}/functions/v1/contact-form`, {
+            const response = await fetch(`${SUPABASE_URL}/contact-form`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,11 +108,11 @@ if (contactForm) {
 function showMessage(message, type, element) {
     element.textContent = message;
     element.className = `form-message ${type}`;
-    element.style.display = 'block';
+    element.style.display = 'flex';
     
     setTimeout(() => {
         element.style.display = 'none';
-    }, 5000);
+    }, 2000);
 }
 
 function observeElements() {
@@ -125,7 +125,7 @@ function observeElements() {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.service-card, .project-card, .skill-bar').forEach(el => {
+    document.querySelectorAll('.image, .about, .contact-info, .contact-form-wrapper, .service-card, .project-card, .skill-bar').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'all 0.6s ease';
@@ -141,3 +141,59 @@ window.addEventListener('resize', () => {
         hamburger.classList.remove('active');
     }
 });
+
+// Playlist with both audio file and title
+const playlist = [
+  { src: 'audio/Barry_Courage_Website_Audio.MP3', title: 'BC_Audio' }
+];
+
+let currentTrack = 0;
+const audio = new Audio();
+const titleBox = document.getElementById('music-title')
+// Set audio source and update title
+function playTrack(index) {
+  audio.src = playlist[index].src;
+  audio.play().catch((e) => {
+    console.log('Playback failed:', e);
+  });
+  titleBox.textContent = playlist[index].title;
+}
+
+// When a track ends, play the next
+audio.addEventListener('ended', () => {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  playTrack(currentTrack);
+});
+
+// Try to autoplay on page load
+window.addEventListener('load', () => {
+  audio.volume = 0.5;
+  playTrack(currentTrack);
+});
+
+// Custom cursor
+const cursor = document.querySelector('.custom-cursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+
+// Add some Easter eggs
+let clickCount = 0;
+document.querySelector('.home').addEventListener('click', () => {
+    clickCount++;
+    if (clickCount === 7) {
+        alert('High Consumption Of Data Turned Off!');
+        setTimeout(() => {
+            document.body.style.filter = 'none';
+        }, 3000);
+        clickCount = 0;
+    }
+});
+
+// Add some sound effects (optional)
+function playSound(type) {
+    // This would integrate with Web Audio API for sound effects
+    console.log(`Playing ${type} sound effect`);
+}
+
