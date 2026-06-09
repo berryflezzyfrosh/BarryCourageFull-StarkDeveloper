@@ -1,122 +1,141 @@
-// UPDATE THESE WITH YOUR Bolt Database VALUES
-const SUPABASE_URL = 'https://jznoyiuugqgedkfcyfwv.supabase.co'; // Replace with your Project URL
-const SUPABASE_ANON_KEY = 'sb_publishable_O1GFEpV3278Vp-lsb5YVTg_BZNKfw7y'; // Replace with your Anon Key
+// SUPABASE CONFIG
+const SUPABASE_URL = 'https://jznoyiuugqgedkfcyfwv.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_O1GFEpV3278Vp-lsb5YVTg_BZNKfw7y';
 
+// ELEMENTS (SAFE CHECKS)
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 const navLinks = document.querySelectorAll('.nav-link');
 const scrollTopBtn = document.querySelector('.scroll-top');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+// MOBILE MENU
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
+        hamburger?.classList.remove('active');
+        navMenu?.classList.remove('active');
     });
 });
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-        scrollTopBtn.classList.add('show');
-    } else {
-        scrollTopBtn.classList.remove('show');
-    }
-});
+// SCROLL BUTTON
+if (scrollTopBtn) {
+    window.addEventListener('scroll', () => {
+        scrollTopBtn.classList.toggle('show', window.scrollY > 300);
+    });
 
-scrollTopBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    scrollTopBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
 
+// PROJECT HOVER EFFECT
 document.querySelectorAll('.project-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(5px)`;
+
+        const rotateX = (y - rect.height / 2) / 10;
+        const rotateY = (rect.width / 2 - x) / 10;
+
+        card.style.transform =
+            `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
-    
+
     card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
     });
 });
 
+// CONTACT FORM (FIXED SUPABASE CALL)
 const contactForm = document.getElementById('contact-form');
+
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitBtn = contactForm.querySelector('.submit-btn');
         const formMessage = document.querySelector('.form-message');
-        const originalText = submitBtn.textContent;
 
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const subject = document.getElementById('subject').value.trim();
-        const message = document.getElementById('message').value.trim();
+        const firstName = document.getElementById('firstName')?.value.trim();
+        const lastName = document.getElementById('lastName')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const subject = document.getElementById('subject')?.value.trim();
+        const message = document.getElementById('message')?.value.trim();
 
         if (!firstName || !lastName || !email || !subject) {
-            showMessage('Please fill in all required fields', 'error', formMessage);
-            return;
+            return showMessage('Please fill required fields', 'error', formMessage);
         }
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
 
         try {
-            const response = await fetch(`${SUPABASE_URL}/contact-form`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                },
-                body: JSON.stringify({
-                    firstName,
-                    lastName,
-                    email,
-                    subject,
-                    message
-                })
-            });
+            const response = await fetch(
+                `${SUPABASE_URL}/rest/v1/contact_form`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        email,
+                        subject,
+                        message
+                    })
+                }
+            );
 
             const result = await response.json();
 
             if (response.ok) {
-                showMessage(result.message || 'Message sent successfully!', 'success', formMessage);
+                showMessage('Message sent successfully!', 'success', formMessage);
                 contactForm.reset();
             } else {
-                showMessage(result.message || 'Failed to send message', 'error', formMessage);
+                showMessage('Failed to send message', 'error', formMessage);
             }
-        } catch (error) {
-            showMessage('Network error. Please try again or email directly.', 'error', formMessage);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
+
+        } catch (err) {
+            showMessage('Network error. Try again.', 'error', formMessage);
         }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send';
     });
 }
 
+// MESSAGE FUNCTION
 function showMessage(message, type, element) {
+    if (!element) return;
+
     element.textContent = message;
     element.className = `form-message ${type}`;
     element.style.display = 'flex';
-    
+
     setTimeout(() => {
         element.style.display = 'none';
-    }, 2000);
+    }, 3000);
 }
 
+// ANIMATION OBSERVER
 function observeElements() {
-    const observer = new IntersectionObserver((entries) => {
+    const elements = document.querySelectorAll(
+        '.image, .about, .contact-info, .contact-form-wrapper, .service-card, .project-card, .skill-bar'
+    );
+
+    const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
@@ -125,7 +144,7 @@ function observeElements() {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.image, .about, .contact-info, .contact-form-wrapper, .service-card, .project-card, .skill-bar').forEach(el => {
+    elements.forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'all 0.6s ease';
@@ -135,65 +154,66 @@ function observeElements() {
 
 document.addEventListener('DOMContentLoaded', observeElements);
 
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) {
-        navMenu.classList.remove('active');
-        hamburger.classList.remove('active');
-    }
-});
-
-// Playlist with both audio file and title
+// AUDIO PLAYER
 const playlist = [
-  { src: 'audio/Barry_Courage_Website_Audio.MP3', title: 'BC_Audio' }
+    { src: 'audio/Barry_Courage_Website_Audio.MP3', title: 'BC_Audio' }
 ];
 
 let currentTrack = 0;
 const audio = new Audio();
-const titleBox = document.getElementById('music-title')
-// Set audio source and update title
+const titleBox = document.getElementById('music-title');
+
 function playTrack(index) {
-  audio.src = playlist[index].src;
-  audio.play().catch((e) => {
-    console.log('Playback failed:', e);
-  });
-  titleBox.textContent = playlist[index].title;
-}
+    audio.src = playlist[index].src;
 
-// When a track ends, play the next
-audio.addEventListener('ended', () => {
-  currentTrack = (currentTrack + 1) % playlist.length;
-  playTrack(currentTrack);
-});
+    audio.play().catch(err => {
+        console.log('Autoplay blocked:', err);
+    });
 
-// Try to autoplay on page load
-window.addEventListener('load', () => {
-  audio.volume = 0.5;
-  playTrack(currentTrack);
-});
-
-// Custom cursor
-const cursor = document.querySelector('.custom-cursor');
-document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-});
-
-// Add some Easter eggs
-let clickCount = 0;
-document.querySelector('.home').addEventListener('click', () => {
-    clickCount++;
-    if (clickCount === 7) {
-        alert('High Consumption Of Data Turned Off!');
-        setTimeout(() => {
-            document.body.style.filter = 'none';
-        }, 3000);
-        clickCount = 0;
+    if (titleBox) {
+        titleBox.textContent = playlist[index].title;
     }
-});
-
-// Add some sound effects (optional)
-function playSound(type) {
-    // This would integrate with Web Audio API for sound effects
-    console.log(`Playing ${type} sound effect`);
 }
 
+audio.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    playTrack(currentTrack);
+});
+
+// ONLY plays after user interaction (fix autoplay issue)
+window.addEventListener('click', () => {
+    audio.volume = 0.5;
+    playTrack(currentTrack);
+}, { once: true });
+
+// CUSTOM CURSOR SAFE
+const cursor = document.querySelector('.custom-cursor');
+
+if (cursor) {
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+    });
+}
+
+// EASTER EGG SAFE
+const home = document.querySelector('.home');
+
+if (home) {
+    let clickCount = 0;
+
+    home.addEventListener('click', () => {
+        clickCount++;
+
+        if (clickCount === 7) {
+            alert('High Consumption Of Data Turned Off!');
+            document.body.style.filter = 'none';
+            clickCount = 0;
+        }
+    });
+}
+
+// SOUND FUNCTION
+function playSound(type) {
+    console.log(`Playing ${type} sound effect`);
+            }
